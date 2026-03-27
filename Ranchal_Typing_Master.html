@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="description" content="Ranchal Typing Master - Professional typing speed test. Measure your WPM, accuracy, and improve your typing skills with real-time feedback.">
+  <title>Ranchal Typing Master | Precision Typing Speed Test</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #0b1120 0%, #111827 100%);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    .master-container {
+      max-width: 1300px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .brand h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #E2E8F0, #A5F3FC, #7C3AED);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.02em;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .brand .tagline {
+      color: #94A3B8;
+      font-weight: 500;
+      margin-top: 0.5rem;
+      font-size: 1.05rem;
+      letter-spacing: 0.3px;
+    }
+
+    .typing-card {
+      background: rgba(18, 25, 45, 0.75);
+      backdrop-filter: blur(12px);
+      border-radius: 2.5rem;
+      border: 1px solid rgba(71, 85, 105, 0.5);
+      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.02) inset;
+      overflow: hidden;
+    }
+
+    .stats-panel {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.5rem 2rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid rgba(71, 85, 105, 0.4);
+    }
+
+    .stat {
+      background: rgba(15, 23, 42, 0.7);
+      border-radius: 2rem;
+      padding: 0.6rem 1.4rem;
+      min-width: 110px;
+      text-align: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: #94A3B8;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: #F1F5F9;
+      line-height: 1.2;
+    }
+
+    .stat-unit {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #60A5FA;
+    }
+
+    .timer-value {
+      color: #FACC15;
+      text-shadow: 0 0 5px rgba(250,204,21,0.3);
+    }
+
+    .passage-area {
+      padding: 2rem 2rem 1rem 2rem;
+    }
+
+    .passage-text {
+      background: #0F172A;
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 1.35rem;
+      line-height: 1.6;
+      letter-spacing: 0.01em;
+      color: #CBD5E1;
+      word-break: break-word;
+      white-space: pre-wrap;
+      border: 1px solid #334155;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .char-span {
+      display: inline-block;
+      position: relative;
+      font-family: inherit;
+      font-size: inherit;
+      transition: all 0.05s ease;
+      border-radius: 4px;
+      padding: 0 1px;
+    }
+
+    .char-correct {
+      color: #4ADE80;
+      text-shadow: 0 0 2px #14532d;
+    }
+
+    .char-incorrect {
+      color: #F87171;
+      background: rgba(248, 113, 113, 0.2);
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 4px;
+    }
+
+    .char-current {
+      background: rgba(59, 130, 246, 0.2);
+      color: #E2E8F0;
+      border-bottom: 2px solid #3B82F6;
+      font-weight: 600;
+      border-radius: 2px;
+      text-shadow: none;
+    }
+
+    .char-pending {
+      color: #64748B;
+    }
+
+    .input-area {
+      padding: 0.5rem 2rem 2rem 2rem;
+    }
+
+    .typing-input {
+      width: 100%;
+      background: #0A0F1C;
+      border: 2px solid #2D3A5E;
+      border-radius: 1.5rem;
+      padding: 1.2rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.2rem;
+      line-height: 1.5;
+      color: #E2E8F0;
+      resize: vertical;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .typing-input:focus {
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
+      background: #0F172A;
+    }
+
+    .typing-input:disabled {
+      background: #1E293B;
+      border-color: #475569;
+      color: #94A3B8;
+      cursor: not-allowed;
+    }
+
+    .control-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 2rem 2rem 2rem;
+      border-top: 1px solid rgba(71, 85, 105, 0.3);
+      margin-top: 0.5rem;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: #1E293B;
+      border: none;
+      padding: 0.7rem 1.4rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      color: #E2E8F0;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      backdrop-filter: blur(4px);
+      border: 1px solid #334155;
+    }
+
+    .btn-primary {
+      background: #3B82F6;
+      border-color: #60A5FA;
+      color: white;
+      box-shadow: 0 2px 6px rgba(59,130,246,0.3);
+    }
+
+    .btn-primary:hover {
+      background: #2563EB;
+      transform: translateY(-2px);
+    }
+
+    .btn:hover {
+      background: #2D3A5E;
+      transform: translateY(-1px);
+    }
+
+    .time-selector {
+      background: #0F172A;
+      border: 1px solid #334155;
+      border-radius: 2rem;
+      padding: 0.6rem 1.2rem;
+      font-family: 'Inter', monospace;
+      font-weight: 600;
+      color: #F1F5F9;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .footer-note {
+      text-align: center;
+      padding: 1rem 2rem 1.5rem;
+      font-size: 0.75rem;
+      color: #5B6E8C;
+      border-top: 1px solid rgba(71, 85, 105, 0.2);
+    }
+
+    @media (max-width: 720px) {
+      .stats-panel {
+        padding: 1rem;
+      }
+      .stat-value {
+        font-size: 1.5rem;
+      }
+      .passage-text {
+        font-size: 1rem;
+        padding: 1rem;
+      }
+      .typing-input {
+        font-size: 1rem;
+      }
+      .brand h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="master-container">
+  <div class="brand">
+    <h1>⚡ Ranchal Typing Master</h1>
+    <div class="tagline">precision • speed • mastery — professional typing test</div>
+  </div>
+
+  <div class="typing-card">
+    <div class="stats-panel">
+      <div class="stat">
+        <div class="stat-label">WPM</div>
+        <div class="stat-value"><span id="wpmValue">0</span><span class="stat-unit"> wpm</span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">ACCURACY</div>
+        <div class="stat-value"><span id="accuracyValue">100</span><span class="stat-unit">%</span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">ERRORS</div>
+        <div class="stat-value"><span id="errorsCount">0</span><span class="stat-unit"> chars</span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">TIME LEFT</div>
+        <div class="stat-value timer-value"><span id="timerDisplay">05:00</span></div>
+      </div>
+    </div>
+
+    <div class="passage-area">
+      <div class="passage-text" id="passageContainer"></div>
+    </div>
+
+    <div class="input-area">
+      <textarea id="typingArea" class="typing-input" rows="3" placeholder="Click here and start typing to begin the test..."></textarea>
+    </div>
+
+    <div class="control-bar">
+      <div class="btn-group">
+        <button id="restartBtn" class="btn">⟳ Restart Test</button>
+        <button id="newPassageBtn" class="btn btn-primary">✨ New Passage</button>
+      </div>
+      <div>
+        <select id="timeSelect" class="time-selector">
+          <option value="60">1 minute</option>
+          <option value="120">2 minutes</option>
+          <option value="300" selected>5 minutes</option>
+        </select>
+      </div>
+    </div>
+    <div class="footer-note">
+      🧠 Accuracy = correct chars / total typed chars • WPM = (correct chars / 5) / minutes elapsed<br>
+      ✨ Auto‑advance: finish a passage → next passage loads automatically
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- RANCHAL TYPING MASTER - PROFESSIONAL TYPING ENGINE ----------
+  // clean, self-contained, zero ads, zero tracking
+
+  // ----- PREMIUM PASSAGE BANK (inspiring & varied texts) -----
+  const PASSAGE_BANK = [
+    "The art of typing is not merely about speed but about rhythm and precision. Every keystroke builds a bridge between thought and digital expression.",
+    "To become a master typist, practice with intention. Focus on accuracy first; speed will follow naturally like a river finding its course.",
+    "In the quiet focus of the fingers dancing on keys, we discover the pure joy of creation without friction. Flow is the ultimate metric.",
+    "Ranchal Typing Master empowers you to measure progress. Consistency beats intensity, and mindful repetition rewires muscle memory.",
+    "Technology fades when skill emerges. The keyboard becomes invisible, leaving only the crisp flow of words forming on the screen.",
+    "Efficiency is doing things right; effectiveness is typing the right words with clarity. Combine both and you become unstoppable.",
+    "Set goals, track your words per minute, and celebrate tiny improvements. Every five correct words is a step toward mastery.",
+    "Great typists don't rush; they breathe steady and maintain form. Keep your wrists neutral, eyes on text, and let fingers glide.",
+    "The digital world rewards those who can articulate swiftly. Typing speed is a superpower in the modern age of communication.",
+    "Practice this passage with calm determination: focus on each character, avoid backspacing too often, and build fluent accuracy."
+  ];
+
+  // DOM elements
+  const passageContainer = document.getElementById('passageContainer');
+  const typingArea = document.getElementById('typingArea');
+  const wpmSpan = document.getElementById('wpmValue');
+  const accuracySpan = document.getElementById('accuracyValue');
+  const errorsSpan = document.getElementById('errorsCount');
+  const timerDisplaySpan = document.getElementById('timerDisplay');
+  const restartBtn = document.getElementById('restartBtn');
+  const newPassageBtn = document.getElementById('newPassageBtn');
+  const timeSelect = document.getElementById('timeSelect');
+
+  // ---- STATE ----
+  let currentPassage = "";
+  let typedText = "";
+  let testActive = false;           // timer running
+  let testFinished = false;         // time's up
+  let timerInterval = null;
+  let timeLeftSeconds = 300;
+  let selectedTotalSeconds = 300;
+
+  // Accumulated stats across all completed passages (including current partial)
+  let totalCorrectChars = 0;
+  let totalTypedChars = 0;
+
+  // helper: format mm:ss
+  function formatTime(sec) {
+    const mins = Math.floor(sec / 60);
+    const remainSec = sec % 60;
+    return `${mins.toString().padStart(2, '0')}:${remainSec.toString().padStart(2, '0')}`;
+  }
+
+  function updateTimerUI() {
+    timerDisplaySpan.innerText = formatTime(timeLeftSeconds);
+  }
+
+  // compute correct characters for a given typed string against a passage (only up to passage length)
+  function computeCorrectChars(typed, passage) {
+    const limit = Math.min(typed.length, passage.length);
+    let correct = 0;
+    for (let i = 0; i < limit; i++) {
+      if (typed[i] === passage[i]) correct++;
+    }
+    return correct;
+  }
+
+  // update overall stats (WPM, accuracy, errors) using accumulated totals + current partial
+  function updateStatsAndErrors() {
+    // total typed chars = accumulated + current typed length
+    const currentTypedChars = typedText.length;
+    const totalTyped = totalTypedChars + currentTypedChars;
+    // total correct = accumulated correct + correct chars in current typed (against current passage)
+    const currentCorrect = computeCorrectChars(typedText, currentPassage);
+    const totalCorrect = totalCorrectChars + currentCorrect;
+
+    const errors = totalTyped - totalCorrect;
+    errorsSpan.innerText = errors;
+
+    let accuracy = 100;
+    if (totalTyped > 0) {
+      accuracy = (totalCorrect / totalTyped) * 100;
+    }
+    accuracySpan.innerText = Math.floor(accuracy);
+
+    // WPM: (totalCorrect / 5) / minutesElapsed
+    let elapsedSeconds = 0;
+    if (testActive || testFinished) {
+      elapsedSeconds = selectedTotalSeconds - timeLeftSeconds;
+      if (elapsedSeconds < 0) elapsedSeconds = selectedTotalSeconds;
+    }
+    let rawWPM = 0;
+    const minutesElapsed = elapsedSeconds / 60;
+    if (minutesElapsed > 0 && totalCorrect > 0) {
+      rawWPM = (totalCorrect / 5) / minutesElapsed;
+    }
+    wpmSpan.innerText = Math.floor(rawWPM);
+  }
+
+  // render passage with highlighting (current char indicator)
+  function renderHighlightedPassage() {
+    if (!currentPassage) return;
+    const passageChars = currentPassage.split('');
+    const typed = typedText;
+    const typedLen = typed.length;
+    const htmlSpans = [];
+
+    for (let i = 0; i < passageChars.length; i++) {
+      const char = passageChars[i];
+      let statusClass = 'char-pending';
+      let isCurrent = false;
+
+      if (i < typedLen) {
+        statusClass = (typed[i] === char) ? 'char-correct' : 'char-incorrect';
+      } else {
+        statusClass = 'char-pending';
+      }
+      if (i === typedLen && !testFinished) {
+        isCurrent = true;
+      }
+      const additionalClass = isCurrent ? 'char-current' : '';
+      htmlSpans.push(`<span class="char-span ${statusClass} ${additionalClass}">${escapeHtml(char)}</span>`);
+    }
+    passageContainer.innerHTML = htmlSpans.join('');
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+      return c;
+    });
+  }
+
+  function refreshUI() {
+    if (!currentPassage) return;
+    renderHighlightedPassage();
+    updateStatsAndErrors();
+  }
+
+  // load a new passage (different from current) and reset typed text, but keep accumulators and timer
+  function loadNextPassage() {
+    if (!testActive && !testFinished) return; // only auto‑advance when test is running
+
+    // Add current partial's correct chars to accumulators before resetting
+    const currentCorrect = computeCorrectChars(typedText, currentPassage);
+    totalCorrectChars += currentCorrect;
+    totalTypedChars += typedText.length;
+
+    // Choose a new passage different from current
+    let newPassage;
+    do {
+      const randomIndex = Math.floor(Math.random() * PASSAGE_BANK.length);
+      newPassage = PASSAGE_BANK[randomIndex];
+    } while (newPassage === currentPassage && PASSAGE_BANK.length > 1);
+    currentPassage = newPassage;
+    typedText = "";
+    typingArea.value = "";
+    refreshUI();
+    // Keep focus
+    typingArea.focus();
+  }
+
+  // stop timer & deactivate test
+  function stopTimerAndDeactivate() {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    testActive = false;
+  }
+
+  // finish test (time's up)
+  function finishTest() {
+    if (testFinished) return;
+    stopTimerAndDeactivate();
+    testFinished = true;
+    testActive = false;
+    typingArea.disabled = true;
+    refreshUI(); // final stats
+    passageContainer.style.opacity = '0.9';
+  }
+
+  // start timer (first keystroke)
+  function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    testActive = true;
+    testFinished = false;
+    timerInterval = setInterval(() => {
+      if (!testActive) return;
+      if (timeLeftSeconds <= 1) {
+        timeLeftSeconds = 0;
+        updateTimerUI();
+        finishTest();
+      } else {
+        timeLeftSeconds--;
+        updateTimerUI();
+        refreshUI();  // update WPM with elapsed time
+      }
+    }, 1000);
+  }
+
+  // full reset: clear accumulators, reset passage, timer, etc.
+  function fullReset(keepPassage = true, newPassageText = null) {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    testActive = false;
+    testFinished = false;
+    typingArea.disabled = false;
+    if (newPassageText !== null) {
+      currentPassage = newPassageText;
+    } else if (!keepPassage && PASSAGE_BANK.length) {
+      currentPassage = PASSAGE_BANK[Math.floor(Math.random() * PASSAGE_BANK.length)];
+    }
+    if (!currentPassage && PASSAGE_BANK.length) currentPassage = PASSAGE_BANK[0];
+    typedText = "";
+    typingArea.value = "";
+    // reset accumulators
+    totalCorrectChars = 0;
+    totalTypedChars = 0;
+    timeLeftSeconds = selectedTotalSeconds;
+    updateTimerUI();
+    refreshUI();
+    typingArea.focus();
+  }
+
+  // load random passage and reset (manual "New Passage" button)
+  function loadRandomPassageAndReset() {
+    if (timerInterval) clearInterval(timerInterval);
+    let randomIndex = Math.floor(Math.random() * PASSAGE_BANK.length);
+    let newPass = PASSAGE_BANK[randomIndex];
+    if (PASSAGE_BANK.length > 1 && newPass === currentPassage) {
+      randomIndex = (randomIndex + 1) % PASSAGE_BANK.length;
+      newPass = PASSAGE_BANK[randomIndex];
+    }
+    fullReset(false, newPass);
+  }
+
+  function onTimeChange() {
+    const newTime = parseInt(timeSelect.value, 10);
+    selectedTotalSeconds = newTime;
+    timeLeftSeconds = newTime;
+    updateTimerUI();
+    fullReset(true, currentPassage);
+  }
+
+  // main typing handler: auto‑advance when passage is completed
+  function handleTyping(e) {
+    if (testFinished) return;
+
+    const rawInput = e.target.value;
+    // sanitize newlines to spaces
+    let sanitized = rawInput.replace(/\n/g, ' ').replace(/\r/g, '');
+    if (sanitized !== rawInput) {
+      const cursorPos = typingArea.selectionStart;
+      typingArea.value = sanitized;
+      if (cursorPos !== sanitized.length) {
+        typingArea.setSelectionRange(sanitized.length, sanitized.length);
+      }
+    }
+    const newTyped = typingArea.value;
+    typedText = newTyped;
+
+    // Auto‑start on first character
+    if (!testActive && !testFinished && typedText.length > 0) {
+      startTimer();
+    }
+
+    // Check if current passage is fully typed (length >= passage length)
+    if (testActive && typedText.length >= currentPassage.length) {
+      // Add this passage's correct chars to accumulators before moving to next
+      const currentCorrect = computeCorrectChars(typedText, currentPassage);
+      totalCorrectChars += currentCorrect;
+      totalTypedChars += typedText.length;
+
+      // Load next passage
+      let newPassage;
+      do {
+        const randomIndex = Math.floor(Math.random() * PASSAGE_BANK.length);
+        newPassage = PASSAGE_BANK[randomIndex];
+      } while (newPassage === currentPassage && PASSAGE_BANK.length > 1);
+      currentPassage = newPassage;
+      typedText = "";
+      typingArea.value = "";
+      // Keep timer active, testActive remains true
+      refreshUI();
+      typingArea.focus();
+    } else {
+      refreshUI();
+    }
+  }
+
+  // Event binding & init
+  function init() {
+    currentPassage = PASSAGE_BANK[Math.floor(Math.random() * PASSAGE_BANK.length)];
+    selectedTotalSeconds = 300;
+    timeLeftSeconds = 300;
+    totalCorrectChars = 0;
+    totalTypedChars = 0;
+    typedText = "";
+    typingArea.value = "";
+    testActive = false;
+    testFinished = false;
+    typingArea.disabled = false;
+    updateTimerUI();
+    refreshUI();
+
+    typingArea.addEventListener('input', handleTyping);
+    restartBtn.addEventListener('click', () => {
+      if (timerInterval) clearInterval(timerInterval);
+      fullReset(true, currentPassage);
+    });
+    newPassageBtn.addEventListener('click', () => {
+      if (timerInterval) clearInterval(timerInterval);
+      loadRandomPassageAndReset();
+    });
+    timeSelect.addEventListener('change', onTimeChange);
+    typingArea.focus();
+  }
+
+  init();
+</script>
+</body>
+</html>
